@@ -28,17 +28,38 @@ class AppUserService(
     }
 
     fun createUser(appUserRequest: AppUserRequest): Mono<AppUser> {
-        return appUserRepository.findByEmail(appUserRequest.email)
-            .flatMap {
-                Mono.error<AppUser>(
-                    BadRequestException("이미 사용중인 이메일입니다.")
-                )
-            }.switchIfEmpty {
+        return findByEmail(appUserRequest.email)
+            .switchIfEmpty {
                 appUserRepository.save(
                     AppUser(
                         name = appUserRequest.name,
                         email = appUserRequest.email
                     )
+                )
+            }
+    }
+
+    fun updateUser(id: Long, appUserRequest: AppUserRequest): Mono<AppUser> {
+        return findById(id)
+            .flatMap {
+                findByEmail(appUserRequest.email)
+                    .switchIfEmpty {
+                        appUserRepository.save(
+                            AppUser(
+                                id = id,
+                                name = appUserRequest.name,
+                                email = appUserRequest.email,
+                            )
+                        )
+                    }
+            }
+    }
+
+    private fun findByEmail(email: String): Mono<AppUser> {
+        return appUserRepository.findByEmail(email)
+            .flatMap {
+                Mono.error<AppUser>(
+                    BadRequestException("이미 사용중인 이메일입니다.")
                 )
             }
     }

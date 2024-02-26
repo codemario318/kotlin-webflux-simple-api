@@ -2,9 +2,11 @@ package com.mario.webflux.controller
 
 import com.mario.webflux.model.AppUser
 import com.mario.webflux.service.AppUserService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -27,7 +29,15 @@ class AppUserController(
     }
 
     @PostMapping
-    fun createUser(@RequestBody appUserRequest: AppUserRequest): Mono<AppUser> {
+    fun createUser(@Valid @RequestBody appUserRequest: AppUserRequest): Mono<AppUser> {
         return appUserService.createUser(appUserRequest)
+    }
+
+    @PutMapping("/{id}")
+    fun updateUser(
+        @Valid @RequestBody appUserRequest: AppUserRequest,
+        @PathVariable id: Long
+    ): Mono<AppUser> {
+        return appUserService.updateUser(id, appUserRequest)
     }
 }
