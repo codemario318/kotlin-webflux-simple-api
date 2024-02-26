@@ -63,4 +63,10 @@ class AppUserService(
                 )
             }
     }
+
+    fun deleteUser(id: Long): Mono<Void> {
+        return findById(id).flatMap { foundUser ->
+            appUserRepository.delete(foundUser)
+        }
+    }
 }
