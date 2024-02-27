@@ -17,8 +17,8 @@ psql -U postgres
 ```sql
 CREATE TABLE app_user(
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE
 );
 
 INSERT INTO app_user 
